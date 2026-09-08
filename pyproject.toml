@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nv-quantum-sensor-simulator"
+version = "0.1.0"
+description = "A computational framework to design and test NV quantum-sensor configurations before experimental implementation."
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Amani Tahat"}
+]
+dependencies = [
+    "numpy",
+    "scipy",
+    "matplotlib",
+    "qutip"
+]
+
+[tool.setuptools.packages.find]
+include = ["nv*", "fem*", "pirl*"]
