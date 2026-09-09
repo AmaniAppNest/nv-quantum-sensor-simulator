@@ -417,8 +417,7 @@ The emphasis is on:
 * Modular scientific software.
 * Explicit validation through automated tests.
 * Clear separation between core computational components and specialized extensions.
-
-For additional computational extensions and technical details, see **[extention.txt](extention.txt)**.
+*For additional extensions and technical details, see [Extension Architecture](extention.text.md).*
 
 ---
 
