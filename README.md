@@ -503,7 +503,7 @@ The project addresses several computational aspects relevant to NV-center quantu
 
 * Spin-Hamiltonian modeling
 * Magnetic-field interactions
-* Mechanical strain effects
+* Mechanical strain effects 
 * Open quantum-system dynamics
 * Decoherence
 * Dynamical decoupling
