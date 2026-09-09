@@ -5,7 +5,6 @@ from dataclasses import dataclass
 
 import numpy as np
 
-
 @dataclass(frozen=True)
 class FieldData:
     """Represent a spatially sampled physical field."""
@@ -49,3 +48,7 @@ class FieldData:
         index = np.argmin(distances)
 
         return self.values[index]
+    
+    def value_at_sensor(self, sensor):
+        """Return the field value at an NV sensor position."""
+        return self.nearest_value(sensor.position)  

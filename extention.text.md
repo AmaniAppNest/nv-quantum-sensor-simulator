@@ -125,47 +125,125 @@ This provides the first spatial representation layer for extending the simulator
 
 ## Extension 2 — Multiphysics Interoperability
 
-The framework supports the use of different physical-field and multiphysics sources.
+The multiphysics-interoperability extension provides a common representation for spatially sampled physical-field data.
 
-The built-in Python FEM layer provides one computational route for mechanical modeling, while external multiphysics environments can participate through suitable Python interoperability or data exchange.
+The current implementation is provided by:
 
 ```text
-                 NV QUANTUM SENSOR FRAMEWORK
-                              │
-              ┌───────────────┼───────────────┐
-              │               │               │
-              ▼               ▼               ▼
-        Python FEM         COMSOL           ANSYS
-              │               │               │
-              └───────────────┼───────────────┘
-                              │
-                              ▼
-                     Physical Field Data
-                              │
-                              ▼
-                         NV Model
+fem/field_data.py
 ```
 
-COMSOL and ANSYS are examples of external FEM and multiphysics environments that can exchange physical simulation data with the framework where appropriate interoperability mechanisms are available.
+The `FieldData` model provides a generic interface for representing physical quantities sampled at three-dimensional spatial locations.
 
-The framework therefore does not depend on a single multiphysics solver and can also be used as a Python scientific component within a larger simulation workflow.
+It provides:
+
+* spatial sample positions
+* corresponding physical-field values
+* field names and units
+* validation of spatial and field-data dimensions
+* nearest-position field lookup
+* field-value retrieval at an NV sensor position
+
+The current implementation can therefore connect spatial physical-field data with the spatial NV sensor model.
+
+The interface supports the computational path:
+
+```text
+Physical Field Data
+        │
+        ▼
+Spatial Field Representation
+        │
+        ▼
+NV Sensor Position
+        │
+        ▼
+Local Physical Field Value
+```
+
+The implementation is validated by:
+
+```text
+tests/test_field_data.py
+```
+
+The current test suite verifies:
+
+* spatial field-data construction
+* field metadata
+* nearest-position lookup
+* invalid spatial input handling
+* mismatched field-data handling
+* empty-data rejection
+* field-value retrieval at an NV sensor position
+
+The interface is intentionally solver-independent. The field data can originate from the built-in Python FEM implementation or from external multiphysics environments through appropriate data-exchange or Python interoperability mechanisms.
+
+This provides a common data layer between multiphysics simulations and spatially resolved NV quantum-sensor models without coupling the framework to a single FEM solver.
+
+The existing Python FEM implementation remains available as one source of physical-field data, while external environments such as COMSOL or ANSYS can be connected through compatible data-exchange workflows.
 
 ## Extension 3 — Physical Environment Coupling
 
-This extension connects environmental conditions to the NV quantum system.
+The physical-environment coupling extension connects local environmental conditions with the NV quantum model.
 
-Relevant physical quantities may include:
+The current implementation is provided by:
 
-* mechanical strain
-* stress and displacement
-* magnetic fields
-* temperature
-* spatial field distributions
-* local environmental perturbations
+```text
+nv/environment.py
+```
 
-The extension transforms these physical quantities into parameters that can be used by the NV Hamiltonian and quantum-dynamics models.
+The `NVEnvironment` model represents the local physical state experienced by an NV sensor.
 
-The separation between field generation and quantum evolution allows different physical models to be connected to the same NV computational foundation.
+It currently supports:
+
+* local magnetic-field components
+* effective strain parameters
+* local temperature
+* validation of physical-state inputs
+* construction of an NV Hamiltonian from the local environment
+* construction of a combined numerical state vector for an NV sensor and its environment
+
+The extension connects the spatial sensor representation introduced in Extension 1 with the physical-field representation introduced in Extension 2.
+
+The resulting computational path is:
+
+```text
+Spatial NV Sensor
+        │
+        ▼
+Local Physical Environment
+        │
+        ├── Magnetic Field
+        ├── Strain
+        └── Temperature
+        │
+        ▼
+NV Hamiltonian
+        │
+        ▼
+Quantum Dynamics
+```
+
+The implementation is validated by:
+
+```text
+tests/test_environment.py
+```
+
+The current test suite verifies:
+
+* physical-environment construction
+* magnetic-field validation
+* temperature validation
+* NV Hamiltonian construction
+* combined sensor-environment state representation
+
+The environment layer separates the description of the local physical state from the underlying quantum-dynamics implementation.
+
+This separation allows additional environmental quantities and field-coupling models to be introduced without redesigning the existing NV Hamiltonian or Lindblad components.
+
+The current implementation provides the computational interface required to connect multiphysics-derived local conditions with the NV quantum model. More detailed field transformations, temperature-dependent parameters, and experimentally calibrated coupling models can be introduced through subsequent extensions.
 
 ## Extension 4 — Quantum Sensing and Measurement
 
