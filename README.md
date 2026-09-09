@@ -346,7 +346,7 @@ python -m examples.coherence_decay
 ``
 Demonstrates quantum coherence decay under Lindblad dephasing.
 
-![NV coherence decay](docs/images/coherence_decay.png)
+<img width="1280" height="960" alt="image" src="https://github.com/user-attachments/assets/48abbdb4-0b5f-475d-a158-26187cecdc9e" />
 
 Figure: Simulated NV coherence decay under Lindblad dephasing.
 
