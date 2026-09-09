@@ -1,3 +1,4 @@
+
 # NV Quantum Sensor Simulator
 
 **A computational framework for designing and testing NV quantum-sensor configurations under realistic physical environments.**
@@ -5,6 +6,16 @@
 An integrated computational framework connecting finite-element mechanical modeling, NV-center spin dynamics, Lindblad open-system evolution, pulse-sequence simulation, and physics-informed adaptive control.
 
 > **Core objective:** A researcher can computationally design and test an NV quantum-sensor configuration before implementing the corresponding hardware experiment.
+
+## Reusable and Integrable Python Framework
+
+The simulator is designed as a reusable Python-based computational framework rather than as a standalone application tied to a single simulation environment.
+
+It can be used directly for NV quantum-sensing simulations, imported as a Python library into larger scientific workflows, or integrated with external multiphysics and computational environments such as COMSOL when Python interoperability or data exchange is available.
+
+This allows the FEM, NV spin-dynamics, sensing, and control components to be used independently or combined with other simulation tools according to the requirements of the physical system being modeled.
+
+
 
 ---
 
