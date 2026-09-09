@@ -111,6 +111,11 @@ The mechanical model includes:
 The implementation uses `scikit-fem` for finite-element assembly and numerical solution.
 
 The resulting displacement and strain fields provide physical inputs for the NV quantum model.
+### Finite-element mechanical field
+
+![Finite-element mechanical field](docs/images/fem_fields.png)
+
+Figure: Finite-element simulation of the mechanical field used as the basis for NV strain modeling.
 
 ---
 
@@ -338,9 +343,13 @@ Current repository validation:
 
 ```bash
 python -m examples.coherence_decay
-```
+``
 
 Demonstrates quantum coherence decay under Lindblad dephasing.
+
+![NV coherence decay](docs/images/coherence_decay.png)
+
+Figure: Simulated NV coherence decay under Lindblad dephasing.
 
 ### Finite-Element Visualization
 
