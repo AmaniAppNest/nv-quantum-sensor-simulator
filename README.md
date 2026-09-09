@@ -126,7 +126,7 @@ These extensions will allow the same physical environment to be evaluated for di
 
 ---
 
-## **Lindblad Quantum Dynamics**
+## Lindblad Quantum Dynamics
 
 Open-system dynamics are modeled using the Lindblad master equation.
 
@@ -134,25 +134,20 @@ The current implementation supports pure dephasing through a collapse operator a
 
 The general form is:
 
-$$
-\frac{d\rho}{dt}
-=
--i[H,\rho]
-+
-\sum_k
-\left(
-L_k\rho L_k^\dagger
--
-\frac{1}{2}
-\left\{
-L_k^\dagger L_k,\rho
-\right\}
-\right)
-$$
+**dρ/dt = −i[H, ρ] + Σₖ (LₖρLₖ† − ½{Lₖ†Lₖ, ρ})**
+
+where:
+
+* **ρ** is the density matrix.
+* **H** is the system Hamiltonian.
+* **Lₖ** are Lindblad collapse operators describing environmental interactions.
+* **†** denotes the Hermitian conjugate.
+* **Σₖ** represents the sum over all modeled environmental channels.
 
 This provides a foundation for studying the effect of environmental decoherence on NV quantum coherence and control protocols.
 
 The framework can later be extended with additional relaxation and environmental channels as the physical model becomes more detailed.
+
 
 ---
 
