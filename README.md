@@ -344,12 +344,13 @@ Current repository validation:
 ```bash
 python -m examples.coherence_decay
 ``
-
 Demonstrates quantum coherence decay under Lindblad dephasing.
 
 ![NV coherence decay](docs/images/coherence_decay.png)
 
 Figure: Simulated NV coherence decay under Lindblad dephasing.
+
+
 
 ### Finite-Element Visualization
 
