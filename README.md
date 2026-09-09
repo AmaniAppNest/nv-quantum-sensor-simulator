@@ -20,7 +20,7 @@ The project is organized around a modular computational pipeline connecting:
 
 **Physical environment → mechanical fields → NV spin Hamiltonian → Lindblad dynamics → control protocol → quantum response → sensing performance**
 
-The current implementation establishes the core numerical components of this pipeline, while advanced spatially resolved NV modeling, sensing observables, and adaptive physics-informed control are being developed incrementally.
+The current implementation establishes the core numerical components of this pipeline, while advanced spatially resolved NV modeling, sensing observables, and adaptive physics-informed control see extension.txt.
 
 ---
 
@@ -64,7 +64,7 @@ The current repository provides a computational foundation for:
 * Automated numerical and physics-consistency tests.
 * Visualization of representative mechanical and quantum-simulation results.
 
-Advanced capabilities, including explicit NV-axis orientation, spatially resolved local environments, full strain-tensor coupling in the NV frame, sensing observables, and adaptive control optimization, form the next stage of development.
+Advanced capabilities, including explicit NV-axis orientation, spatially resolved local environments, full strain-tensor coupling in the NV frame, sensing observables, and adaptive control optimization, see  extension.txt.
 
 ---
 
@@ -122,7 +122,7 @@ The next development stage will extend the model toward:
 * Full strain-tensor coupling.
 * More physically complete magnetic, strain, and environmental interactions.
 
-These extensions will allow the same physical environment to be evaluated for different NV orientations and spatial configurations.
+These extensions will allow the same physical environment to be evaluated for different NV orientations and spatial configurations.see extension.txt.
 
 ---
 
@@ -146,7 +146,7 @@ where:
 
 This provides a foundation for studying the effect of environmental decoherence on NV quantum coherence and control protocols.
 
-The framework can later be extended with additional relaxation and environmental channels as the physical model becomes more detailed.
+ Additional relaxation and environmental channels as the physical model see extension.txt.
 
 
 ---
@@ -252,7 +252,7 @@ A typical workflow can include:
 9. Evaluate a sensing-related observable.
 10. Compare alternative sensor configurations or control protocols.
 
-The first stages are already represented by the current computational modules. The later stages are part of the continuing development of the simulator.
+see extension.txt
 
 ---
 
@@ -448,7 +448,7 @@ The long-term objective is an integrated computational workflow in which researc
 
 ## **Further Development**
 
-Detailed extensions of the computational framework, including advanced sensing observables, explicit NV orientation, full strain-tensor interactions, adaptive control, and physics-informed learning, will be documented separately as the corresponding implementations are completed.
+Detailed extensions of the computational framework, including advanced sensing observables, explicit NV orientation, full strain-tensor interactions, adaptive control, and physics-informed learning, is documented separately see extension.txt.
 
 The architecture is intentionally modular so that these capabilities can be introduced without restructuring the existing FEM and quantum-dynamics foundations.
 
