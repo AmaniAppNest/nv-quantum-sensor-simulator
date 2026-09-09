@@ -306,36 +306,74 @@ The current test suite verifies:
 The current implementation is intentionally lightweight and provides a foundation for more detailed measurement models.
 
 Future sensing extensions can introduce experimentally calibrated readout mechanisms, optical contrast, photon-counting models, measurement noise, sensitivity metrics, and protocol-specific sensing observables.
-
 ## Extension 5 — Adaptive Quantum Control
 
-The adaptive-control layer allows control configurations to depend on the current physical condition of the sensor.
+The adaptive-control extension introduces a computational layer for selecting admissible quantum-control configurations according to an objective function.
 
-The observed state may contain information such as:
+The current implementation is provided by:
 
-* magnetic-field conditions
-* strain
-* temperature
-* decoherence
-* NV orientation
-* spatial configuration
-* available control resources
-* experimental constraints
+```text
+nv/control.py
+```
 
-A control method can then select or optimize an admissible pulse sequence or control configuration for that particular physical condition.
+The `ControlConfiguration` model represents an admissible control configuration by specifying:
 
-The control layer can support:
+* a configuration name
+* a sequence of non-negative control intervals
+* the total duration of the control sequence
 
-* pulse optimization
-* dynamical-decoupling optimization
-* robustness evaluation
-* constrained control
-* multi-objective optimization
-* case-dependent control selection
+The current control-selection interface is:
 
-The physical model defines the valid operating conditions, while the control method determines an appropriate execution strategy within those conditions.
+```python
+select_control_configuration(configurations, objective_values)
+```
 
-This extension is designed to build on the quantum-sensing and measurement layer so that control strategies can be evaluated according to their resulting physical sensing performance.
+This interface selects the control configuration with the highest evaluated objective value.
+
+The control layer is intentionally separated from the quantum-dynamics and measurement layers. The quantum model determines the physical evolution, the measurement layer evaluates the resulting sensing response, and the control layer provides a mechanism for comparing and selecting admissible control configurations.
+
+The current computational path is:
+
+```text
+Physical State
+        |
+        v
+Admissible Control Configurations
+        |
+        v
+Quantum Dynamics
+        |
+        v
+Measurement Signal
+        |
+        v
+Objective Evaluation
+        |
+        v
+Control Selection
+```
+
+The current implementation provides a foundation for adaptive control without introducing a reinforcement-learning algorithm at this stage.
+
+The implementation is validated by:
+
+```text
+tests/test_control.py
+```
+
+The current test suite verifies:
+
+* valid control-configuration construction
+* total control-sequence duration
+* validation of configuration names
+* validation of control-sequence values
+* selection of the configuration with the highest objective value
+* rejection of empty configuration sets
+
+Future extensions can introduce protocol-specific pulse representations, experimentally motivated control constraints, robustness objectives, multi-objective control metrics, and adaptive control policies.
+
+The reinforcement-learning layer is treated separately as Extension 6, where the control-selection mechanism can be extended from direct objective-based selection to physics-informed adaptive policies.
+
 
 ## Extension 6 — Physics-Informed Reinforcement Learning
 
