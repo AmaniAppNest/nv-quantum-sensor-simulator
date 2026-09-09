@@ -12,15 +12,16 @@ The foundation and extension layers form one computational framework. The modula
 
 ```text
 NV QUANTUM SENSOR FRAMEWORK
-│
+
+|
 ├── FOUNDATION
-│   ├── NV spin Hamiltonian
-│   ├── Lindblad quantum dynamics
-│   ├── Pulse-sequence modeling
-│   ├── FEM mechanical modeling
-│   ├── Strain-field representation
-│   └── Scientific numerical interfaces
-│
+|   ├── NV spin Hamiltonian
+|   ├── Lindblad quantum dynamics
+|   ├── Pulse-sequence modeling
+|   ├── FEM mechanical modeling
+|   ├── Strain-field representation
+|   └── Scientific numerical interfaces
+|
 └── EXTENSIONS
     ├── Extension 1 — Spatial NV Sensor Modeling
     ├── Extension 2 — Multiphysics Interoperability
@@ -42,29 +43,29 @@ The framework connects the physical environment of an NV sensor to its simulated
 
 ```text
 Physical Sensor Configuration
-            │
-            ▼
+            |
+            v
 Mechanical / Multiphysics Model
-            │
-            ▼
+            |
+            v
 Physical Environment
-            │
-            ▼
+            |
+            v
 Local NV Physical State
-            │
-            ▼
+            |
+            v
 NV Spin Hamiltonian
-            │
-            ▼
+            |
+            v
 Lindblad Quantum Dynamics
-            │
-            ▼
+            |
+            v
 Control / Pulse Protocol
-            │
-            ▼
+            |
+            v
 Quantum-Sensing Response
-            │
-            ▼
+            |
+            v
 Performance Evaluation
 ```
 
@@ -150,14 +151,14 @@ The interface supports the computational path:
 
 ```text
 Physical Field Data
-        │
-        ▼
+        |
+        v
 Spatial Field Representation
-        │
-        ▼
+        |
+        v
 NV Sensor Position
-        │
-        ▼
+        |
+        v
 Local Physical Field Value
 ```
 
@@ -210,18 +211,20 @@ The resulting computational path is:
 
 ```text
 Spatial NV Sensor
-        │
-        ▼
+        |
+        v
 Local Physical Environment
-        │
-        ├── Magnetic Field
-        ├── Strain
-        └── Temperature
-        │
-        ▼
+        |
+        +── Magnetic Field
+        |
+        +── Strain
+        |
+        +── Temperature
+        |
+        v
 NV Hamiltonian
-        │
-        ▼
+        |
+        v
 Quantum Dynamics
 ```
 
@@ -243,25 +246,66 @@ The environment layer separates the description of the local physical state from
 
 This separation allows additional environmental quantities and field-coupling models to be introduced without redesigning the existing NV Hamiltonian or Lindblad components.
 
-The current implementation provides the computational interface required to connect multiphysics-derived local conditions with the NV quantum model. More detailed field transformations, temperature-dependent parameters, and experimentally calibrated coupling models can be introduced through subsequent extensions.
+The current implementation provides the computational interface required to connect local physical conditions with the NV quantum model. More detailed field transformations, temperature-dependent parameters, spatial interpolation, and experimentally calibrated coupling models can be introduced through subsequent extensions.
 
 ## Extension 4 — Quantum Sensing and Measurement
 
-The sensing layer connects simulated quantum dynamics with measurable sensor responses.
+The quantum-sensing and measurement extension connects simulated NV quantum states with measurable sensing observables.
 
-It provides extension points for:
+The current implementation is provided by:
 
-* quantum observables
-* population measurements
-* coherence measurements
-* Ramsey sensing
-* Hahn-echo sensing
-* dynamical-decoupling protocols
-* signal-response models
-* sensitivity evaluation
-* measurement-noise models
+```text
+nv/measurement.py
+```
 
-This layer provides the connection between quantum-state evolution and the quantities used to evaluate sensing performance.
+The measurement layer provides computational interfaces for evaluating:
+
+* population probabilities in selected NV basis states
+* ground-state coherence
+* normalized sensing signals
+
+The current interfaces are:
+
+```python
+population_probability(state, basis_state)
+coherence_signal(state)
+measurement_signal(state)
+```
+
+The measurement layer is intentionally separated from the quantum-dynamics layer. The quantum model determines the simulated state, while the measurement layer converts that state into quantities that can be used to evaluate sensor response.
+
+The current computational path is:
+
+```text
+NV Quantum State
+        |
+        v
+Measurement Model
+        |
+        v
+Sensing Observable
+        |
+        v
+Sensing Performance
+```
+
+The implementation is validated by:
+
+```text
+tests/test_measurement.py
+```
+
+The current test suite verifies:
+
+* population probability for a selected basis state
+* zero probability for an orthogonal state
+* coherence evaluation for a superposition state
+* normalized measurement-signal construction
+* zero measurement signal for a basis state
+
+The current implementation is intentionally lightweight and provides a foundation for more detailed measurement models.
+
+Future sensing extensions can introduce experimentally calibrated readout mechanisms, optical contrast, photon-counting models, measurement noise, sensitivity metrics, and protocol-specific sensing observables.
 
 ## Extension 5 — Adaptive Quantum Control
 
@@ -290,6 +334,8 @@ The control layer can support:
 * case-dependent control selection
 
 The physical model defines the valid operating conditions, while the control method determines an appropriate execution strategy within those conditions.
+
+This extension is designed to build on the quantum-sensing and measurement layer so that control strategies can be evaluated according to their resulting physical sensing performance.
 
 ## Extension 6 — Physics-Informed Reinforcement Learning
 
@@ -321,27 +367,29 @@ The extension architecture is organized around connections between scientific co
 
 ```text
 Physical Models
-      │
-      ▼
+      |
+      v
 Physical State
-      │
-      ├──────────────► NV Quantum Model
-      │
-      ├──────────────► Sensing Model
-      │
-      └──────────────► Control / Learning Model
-                              │
-                              ▼
+      |
+      +──────────────> NV Quantum Model
+      |
+      +──────────────> Sensing Model
+      |
+      +──────────────> Control / Learning Model
+                              |
+                              v
                      Control Configuration
-                              │
-                              ▼
+                              |
+                              v
                        Quantum Simulation
-                              │
-                              ▼
+                              |
+                              v
                      Sensing Performance
 ```
 
 An extension can introduce a new model or computational method while preserving the existing interfaces between the major scientific layers.
+
+The current architecture therefore allows physical models, field representations, quantum models, measurement methods, control strategies, and learning methods to evolve independently while remaining connected through well-defined computational interfaces.
 
 ## Software and Scientific Ecosystem
 
@@ -367,18 +415,20 @@ A typical extension follows this structure:
 
 ```text
 Scientific Requirement
-        │
-        ▼
+        |
+        v
 Extension Model
-        │
-        ▼
+        |
+        v
 Framework Interface
-        │
-        ├── Numerical Implementation
-        ├── Validation Tests
-        └── Reproducible Example
-        │
-        ▼
+        |
+        +── Numerical Implementation
+        |
+        +── Validation Tests
+        |
+        +── Reproducible Example
+        |
+        v
 Integrated Scientific Workflow
 ```
 
