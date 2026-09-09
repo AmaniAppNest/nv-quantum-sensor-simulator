@@ -6,12 +6,14 @@ The framework combines finite-element mechanical modeling, NV spin Hamiltonians,
 
 > **Central objective:** Enable a researcher to computationally design and test an NV quantum-sensor configuration before implementing the corresponding hardware experiment.
 
-## ![NV Quantum Sensor Simulator computational workflow]
+## Computational Workflow:![NV Quantum Sensor Simulator computational workflow]
 
-The simulator connects the physical environment of an NV sensor to its quantum response and sensing performance through a physics-based computational workflow.
-<img width="1672" height="941" alt="image" src="https://github.com/user-attachments/assets/8d435713-e08a-47a8-8802-39f69ff38dd1" />
+The simulator connects the physical environment of an NV sensor to its quantum response and sensing performance through an integrated computational workflow.
 
-**Figure 1. End-to-end computational workflow of the NV Quantum Sensor Simulator, including physics-informed reinforcement learning for case-specific control optimization.**
+ <img width="1672" height="941" alt="image" src="https://github.com/user-attachments/assets/9a7d1e33-1880-4b9c-bb6b-bb0d6f744fb2" />
+
+
+**Figure 1. End-to-end computational workflow of the NV Quantum Sensor Simulator, including physics-informed control optimization for case-specific sensor conditions.**
 
 The main computational stages are:
 
@@ -20,10 +22,10 @@ The main computational stages are:
 3. NV quantum model
 4. Lindblad open-system dynamics
 5. Quantum control and dynamical decoupling
-6. Physics-informed reinforcement-learning control
+6. Physics-informed control optimization
 7. NV sensor response and performance evaluation
 
-The workflow is designed so that changes in the physical environment propagate through the mechanical and quantum models and ultimately affect control and sensing performance.
+The workflow is designed so that changes in the physical environment can propagate through the mechanical and quantum models and affect the resulting control and sensing response.
 
 ---
 
@@ -33,11 +35,11 @@ Nitrogen-vacancy centers in diamond provide quantum sensors whose response depen
 
 For realistic sensor configurations, these effects cannot always be treated independently.
 
-Mechanical deformation can generate spatially varying strain fields. The local strain experienced by an NV center depends on its position and orientation. Magnetic fields modify the spin Hamiltonian, while environmental interactions determine the evolution and coherence of the quantum state.
+Mechanical deformation can generate spatially varying strain fields. The local strain experienced by an NV center depends on its position and orientation. Magnetic fields modify the spin Hamiltonian, while environmental interactions influence the evolution and coherence of the quantum state.
 
 Control sequences then determine how the quantum system responds to the physical environment.
 
-This simulator connects these physical layers within a common computational framework.
+This simulator connects these physical layers within a common computational framework, providing a computational pathway from environmental conditions to quantum response and sensor performance.
 
 ---
 
@@ -45,12 +47,12 @@ This simulator connects these physical layers within a common computational fram
 
 The framework integrates four principal computational layers:
 
-| Layer                | Computational role                                            |
-| -------------------- | ------------------------------------------------------------- |
-| Mechanical modeling  | Finite-element geometry, elasticity, displacement, and strain |
-| Quantum modeling     | NV spin Hamiltonian and environmental interactions            |
-| Open-system dynamics | Lindblad evolution, decoherence, and quantum coherence        |
-| Control optimization | Dynamical decoupling and physics-informed control selection   |
+| Layer                | Computational role                                                                  |
+| -------------------- | ----------------------------------------------------------------------------------- |
+| Mechanical modeling  | Geometry, finite-element mesh, elasticity, displacement, and strain                 |
+| Quantum modeling     | NV spin Hamiltonian, magnetic-field interaction, and strain-dependent contributions |
+| Open-system dynamics | Lindblad evolution, decoherence, and quantum coherence                              |
+| Control optimization | Dynamical decoupling and physics-informed control selection                         |
 
 The layers are connected so that physical conditions can influence quantum dynamics and control performance.
 
@@ -60,37 +62,34 @@ The layers are connected so that physical conditions can influence quantum dynam
 
 The NV electronic ground state is represented as a spin-1 quantum system.
 
-The Hamiltonian includes:
+The Hamiltonian model includes:
 
 * Zero-field splitting
 * Magnetic-field interaction
 * Transverse strain contribution
 * Configurable electron gyromagnetic ratio
 * Three-component magnetic-field input
-* NV-axis-dependent modeling architecture
 
 The implementation uses QuTiP spin operators and represents the Hamiltonian in frequency units.
 
 > [!IMPORTANT]
-> The quantum model is not treated as an isolated abstract spin system. Environmental and mechanical parameters are introduced as physical inputs to the Hamiltonian.
+> The quantum model is connected to physical environmental parameters rather than treating the NV center as an isolated abstract spin system.
 
 A compact representation of the modeled structure is:
 
 > **NV Hamiltonian = zero-field splitting + magnetic interaction + strain interaction**
 
-This provides the basis for evaluating changes in the NV energy structure under different physical conditions.
+This provides the basis for evaluating changes in the NV energy structure under different magnetic and mechanical conditions.
 
 ---
 
 ## NV Orientation
 
-NV centers occupy specific crystallographic orientations within diamond.
+The response of an NV center depends on the orientation of the NV quantization axis relative to the applied magnetic field and local mechanical environment.
 
-Consequently, the response of an NV sensor depends not only on the magnitude of an environmental field but also on its orientation relative to the NV quantization axis.
+The simulator therefore treats the magnetic field as a three-component vector rather than as a scalar magnitude.
 
-Explicit NV-axis handling is part of the quantum-sensing architecture.
-
-This provides the basis for transforming environmental quantities into the coordinate system relevant to an individual NV center and for extending the simulator toward spatially resolved sensor configurations.
+This provides the basis for orientation-aware quantum-sensing configurations in which local physical quantities can be related to the coordinate system of an individual NV center.
 
 ---
 
@@ -127,7 +126,7 @@ The computational relationship is:
 
 This coupling allows mechanical deformation to influence the quantum energy structure rather than treating strain as an unrelated external parameter.
 
-The architecture is designed to support physically resolved NV locations and orientations as the sensor model develops.
+The architecture also provides a basis for incorporating spatially resolved NV locations and orientation-dependent mechanical effects.
 
 ---
 
@@ -151,98 +150,37 @@ The Hamiltonian is converted from frequency units to angular-frequency units for
 > [!NOTE]
 > The Lindblad layer provides the connection between the ideal NV Hamiltonian and environmentally affected quantum dynamics.
 
-The main computational object is the density matrix:
+The computational flow is:
 
-> **Quantum state → Lindblad evolution → time-dependent density matrix → coherence**
+> **Initial quantum state → Lindblad evolution → time-dependent density matrix → coherence**
+
+This provides a numerical basis for studying how environmental decoherence modifies the quantum sensor response.
 
 ---
 
 ## Dynamical Decoupling
 
-Quantum control is implemented through pulse-sequence modeling.
+Quantum control is represented through pulse-sequence modeling.
 
 The current control layer includes a Hahn-echo sequence consisting of:
 
 1. Free evolution
-2. pi pulse
+2. Pi pulse
 3. Second free-evolution period
 
 The sequence can be combined with Lindblad dynamics to evaluate the resulting quantum coherence.
 
-Dynamical decoupling provides the control mechanism required to investigate how pulse timing and quantum evolution affect sensing performance.
+Dynamical decoupling provides a control mechanism for investigating how pulse timing and quantum evolution affect the sensor response.
+
+The same control layer provides a foundation for evaluating alternative pulse protocols under different physical conditions.
 
 ---
 
-## Physics-Informed Reinforcement Learning
+## Physics-Informed Control Optimization
 
-The control-optimization layer is informed by previous research on case-specific stochastic policies for protocol-compliant execution.
+The simulator is designed so that physical simulation results can provide the state information required for adaptive control and optimization.
 
-The relevant research work is:
-
-> **DynFair: An Ontology-Grounded Reinforcement Learning Framework for Intrinsically Fair Protocol-Compliant Multi-Faceted Decision Execution — Case-Specific Stochastic Policies for Protocol-Compliant Execution**
-
-This is a separate research project and is **not presented as part of the NV quantum-sensor simulator**.
-
-Its relevance to this framework is the computational concept of adapting an execution policy to the observed case while respecting the admissible execution space.
-
-### Case-Specific Stochastic Policy
-
-For an NV sensor, the observed physical state may include:
-
-* Magnetic-field magnitude and orientation
-* Mechanical strain
-* Temperature
-* Decoherence
-* NV orientation
-* Available control operations
-* Experimental constraints
-
-The policy then selects among physically admissible control configurations.
-
-A compact representation is:
-
-> **Physical state → stochastic control policy → admissible control action**
-
-The policy is therefore case-specific rather than assuming that one control strategy is optimal for every physical environment.
-
-> [!IMPORTANT]
-> The term "fairness" in the original DynFair research refers to protocol-compliant execution and is not used here as a social or population-level fairness concept.
-
-The source code associated with the above research framework will be made publicly available upon publication of the corresponding research work.
-
-A formal publication reference and link will be added to this section upon publication.
-
----
-
-## Physics-Based Control Reward
-
-The reinforcement-learning control layer is designed around physically meaningful objectives.
-
-A multi-objective reward can incorporate:
-
-* Quantum signal performance
-* Coherence preservation
-* Sensing sensitivity
-* Robustness to environmental variation
-* Control cost
-* Physical validity of the selected operation
-
-Conceptually:
-
-> [!NOTE]
-> **Reward = sensing performance + coherence + robustness − control cost**
-
-The exact reward formulation can be adapted to the sensing objective and experimental constraints.
-
-This provides a direct connection between reinforcement learning and measurable properties of the simulated quantum sensor.
-
----
-
-## Case-Specific Control
-
-A central principle of the control architecture is that the optimal control configuration can depend on the physical state of the sensor.
-
-Changes in:
+Relevant state information may include:
 
 * Magnetic-field strength
 * Magnetic-field orientation
@@ -253,30 +191,81 @@ Changes in:
 * Available control operations
 * Experimental constraints
 
-can modify the quantum response and therefore the preferred control strategy.
+These quantities can be obtained from the physical simulation and, where appropriate, from sensor or experimental data.
+
+An optimization or reinforcement-learning layer can then use the observed physical state to evaluate or select an appropriate control configuration.
 
 The computational structure is:
 
-> **Physical state → admissible control configuration → quantum evolution → sensing performance**
+> **Physical state → quantum response → control evaluation → sensing performance**
 
-This allows control strategies to be evaluated according to the actual physical conditions represented by the simulator.
+This allows control decisions to be evaluated against the actual physical conditions of the sensor rather than against an isolated abstract model.
+
+The approach is particularly relevant to physics-informed machine learning, where physical constraints and simulated quantum responses can be incorporated into the learning or optimization process.
+
+---
+
+## Physics-Based Control Objectives
+
+Control optimization can be formulated around measurable physical objectives rather than an abstract optimization target.
+
+Relevant objectives include:
+
+* Quantum signal performance
+* Coherence preservation
+* Sensing sensitivity
+* Robustness to environmental variation
+* Control cost
+* Physical validity of the selected operation
+
+A conceptual multi-objective formulation is:
+
+> [!NOTE]
+> **Reward = sensing performance + coherence + robustness − control cost**
+
+The exact objective can be adapted to the sensing task and experimental constraints.
+
+This formulation provides a pathway for integrating physics-based optimization or reinforcement-learning methods with the simulated quantum sensor.
 
 ---
 
 ## Sensor Response and Performance
 
-The final stage of the computational workflow evaluates the response of the NV sensor following the selected physical and control configuration.
+The final stage evaluates the response of the NV sensor under the selected physical and control configuration.
 
-Relevant quantities include:
+Relevant observables and performance measures include:
 
 * Quantum coherence
 * Energy-level structure
 * Signal response
-* Control performance
+* Control response
 * Robustness
 * Sensing sensitivity
 
-The performance evaluation provides the basis for comparing alternative sensor configurations and control strategies.
+These quantities provide the basis for comparing alternative sensor configurations and control strategies.
+
+The objective is not simply to simulate quantum dynamics, but to use the resulting dynamics to inform practical sensor-design decisions.
+
+---
+
+## Sensor Data and Adaptive Learning
+
+The framework can operate with physical states obtained from simulation as well as with suitable sensor or experimental measurements.
+
+A sensor state may contain information describing the current physical environment, such as:
+
+* Magnetic-field conditions
+* Local mechanical strain
+* Temperature
+* Decoherence characteristics
+* NV orientation
+* Experimental control constraints
+
+This information can be passed to an optimization or machine-learning layer to evaluate control configurations for the observed condition.
+
+The resulting architecture provides a pathway from **physical sensing data to quantum modeling and adaptive control**.
+
+This separation between the physical model and the learning layer also allows different optimization approaches to be investigated without changing the underlying NV quantum and mechanical models.
 
 ---
 
@@ -289,11 +278,12 @@ The framework supports computational investigation of questions such as:
 * How does magnetic-field orientation influence the energy structure?
 * How does decoherence affect quantum coherence?
 * How do dynamical-decoupling protocols modify the sensor response?
-* Which control configuration performs best under a particular physical environment?
+* Which control configuration is most suitable for a particular physical environment?
 * How robust is a sensing protocol to environmental variation?
 * How can physical simulation inform adaptive quantum-control decisions?
+* How can simulated or measured sensor states be used for physics-informed control optimization?
 
-The resulting simulations can be used to evaluate sensor configurations before corresponding experimental implementation.
+The resulting simulations can be used to evaluate sensor configurations and control strategies before corresponding experimental implementation.
 
 ---
 
@@ -490,15 +480,17 @@ The framework is structured around a practical computational question:
 > [!IMPORTANT]
 > **What sensor configuration and control strategy should be used for a given physical environment?**
 
-The computational process begins with the environment and mechanical configuration, constructs the corresponding quantum model, propagates the open-system dynamics, applies the selected control protocol, and evaluates the resulting sensor response.
+The computational process begins with the environmental and mechanical configuration, constructs the corresponding quantum model, propagates the open-system dynamics, applies the selected control protocol, and evaluates the resulting sensor response.
 
-This provides a computational pathway from physical modeling to quantum-sensor design.
+When sensor or experimental data are available, the same framework can use the observed physical state as an input to control evaluation and adaptive optimization.
+
+This provides a computational pathway from physical modeling and sensing data to quantum-sensor design.
 
 ---
 
 ## Relevance to NV Quantum Sensing
 
-The project directly addresses computational aspects of NV-center quantum sensing, including:
+The project addresses several computational aspects relevant to NV-center quantum sensing:
 
 * Spin-Hamiltonian modeling
 * Magnetic-field interactions
@@ -508,26 +500,31 @@ The project directly addresses computational aspects of NV-center quantum sensin
 * Dynamical decoupling
 * Finite-element mechanical simulation
 * Physics-informed control optimization
-* Case-specific control policies
+* Adaptive control under physical constraints
+* Sensor-data-driven computational modeling
 * Computational evaluation of sensing performance
 
 The integration of these components provides a computational framework for studying NV sensors under coupled mechanical, magnetic, environmental, and control conditions.
 
 ---
 
-## Related Research
+## Related Research and Adaptive Control
 
-The physics-informed reinforcement-learning architecture is conceptually informed by previous research on case-specific stochastic policies for protocol-compliant execution.
+The broader adaptive-control direction is also conceptually informed by previous research on case-dependent execution under predefined structural constraints.
 
-> **DynFair: An Ontology-Grounded Reinforcement Learning Framework for Intrinsically Fair Protocol-Compliant Multi-Faceted Decision Execution — Case-Specific Stochastic Policies for Protocol-Compliant Execution**
+**DynFair: An Ontology-Grounded Reinforcement Learning Framework for Intrinsically Fair Protocol-Compliant Multi-Faceted Decision Execution — Case-Specific Stochastic Policies for Protocol-Compliant Execution**
 
-The DynFair research is a separate research project.
+DynFair studies how a predefined decision can be executed correctly under different observed structural conditions.
 
-Its contribution to the present framework is conceptual: an observed case can determine a probability distribution over admissible execution strategies while maintaining protocol constraints.
+In simple terms, the research considers how the execution of a predefined decision can adapt to the requirements of the current case while respecting the valid structural constraints of the system.
 
-For the NV application, this principle is translated into a physics-based control setting in which the observed physical state determines the admissible control space and the policy selects a suitable control configuration according to the simulated sensing response.
+This concept can be integrated into the NV sensing context, where the observed physical state defines the current sensor condition and an adaptive control method can determine an appropriate control configuration within the physical and experimental constraints.
 
-A formal publication reference and link will be added after publication of the associated research work.
+The connection is therefore methodological: **the physical model and sensor data describe the current case, while an adaptive learning or optimization layer can determine an appropriate execution strategy for that case.**
+
+This provides a potential bridge between quantum-sensor simulation, sensor data, physics-informed machine learning, and adaptive quantum control.
+
+The source code associated with the DynFair research will be made publicly available upon publication of the corresponding research work. A formal publication reference and link will be added here upon publication.
 
 ---
 
