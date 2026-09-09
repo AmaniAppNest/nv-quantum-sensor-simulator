@@ -7,6 +7,7 @@ from nv.hamiltonian import nv_hamiltonian
 
 
 tau = 1.0e-6
+dephasing_rate = 1.0e6
 
 hamiltonian = nv_hamiltonian(
     magnetic_field=[0.0, 0.0, 1.0e-3],
@@ -16,24 +17,39 @@ ms_zero = qt.basis(3, 1)
 ms_plus = qt.basis(3, 0)
 
 initial_state = (ms_zero + ms_plus).unit()
+initial_density_matrix = initial_state.proj()
+
 pi_pulse = qt.jmat(1, "x")
+
+collapse_operators = [
+    np.sqrt(dephasing_rate) * qt.jmat(1, "z")
+]
 
 times_1 = np.linspace(0.0, tau, 101)
 times_2 = np.linspace(0.0, tau, 101)
 
-first_evolution = qt.sesolve(
+first_evolution = qt.mesolve(
     2.0 * np.pi * hamiltonian,
-    initial_state,
+    initial_density_matrix,
     times_1,
+    c_ops=collapse_operators,
 )
 
 state_after_first = first_evolution.states[-1]
-state_after_pulse = (-1j * np.pi / 2 * pi_pulse).expm() * state_after_first
 
-second_evolution = qt.sesolve(
+pulse_unitary = (-1j * np.pi / 2 * pi_pulse).expm()
+
+state_after_pulse = (
+    pulse_unitary
+    * state_after_first
+    * pulse_unitary.dag()
+)
+
+second_evolution = qt.mesolve(
     2.0 * np.pi * hamiltonian,
     state_after_pulse,
     times_2,
+    c_ops=collapse_operators,
 )
 
 final_state = second_evolution.states[-1]
@@ -41,4 +57,5 @@ final_state = second_evolution.states[-1]
 coherence = abs(final_state[1, 0])
 
 print(f"Tau: {tau * 1e6:.2f} µs")
-print(f"Final coherence: {coherence:.6f}") 
+print(f"Dephasing rate: {dephasing_rate:.2e} s^-1")
+print(f"Final coherence: {coherence:.6f}")
