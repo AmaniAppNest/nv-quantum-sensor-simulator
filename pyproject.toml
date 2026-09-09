@@ -16,7 +16,8 @@ dependencies = [
     "numpy",
     "scipy",
     "matplotlib",
-    "qutip"
+    "qutip",
+    "scikit-fem"
 ]
 
 [tool.setuptools.packages.find]
