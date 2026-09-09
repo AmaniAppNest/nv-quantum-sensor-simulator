@@ -1,386 +1,343 @@
+
 # NV Quantum Sensor Simulator
 
-A computational framework for designing and testing NV quantum-sensor configurations under realistic physical environments.
+**A computational framework for designing and testing NV quantum-sensor configurations under realistic physical environments.**
 
-The framework combines finite-element mechanical modeling, NV spin Hamiltonians, Lindblad open-system dynamics, strain-dependent quantum modeling, dynamical-decoupling protocols, and physics-informed control optimization.
+An integrated computational framework connecting finite-element mechanical modeling, NV-center spin dynamics, Lindblad open-system evolution, pulse-sequence simulation, and physics-informed adaptive control.
 
-> **Central objective:** Enable a researcher to computationally design and test an NV quantum-sensor configuration before implementing the corresponding hardware experiment.
+> **Core objective:** A researcher can computationally design and test an NV quantum-sensor configuration before implementing the corresponding hardware experiment.
 
-## Computational Workflow:![NV Quantum Sensor Simulator computational workflow]
+## Reusable and Integrable Python Framework
+
+The simulator is designed as a reusable Python-based computational framework rather than as a standalone application tied to a single simulation environment.
+
+It can be used directly for NV quantum-sensing simulations, imported as a Python library into larger scientific workflows, or integrated with external multiphysics and computational environments such as COMSOL when Python interoperability or data exchange is available.
+
+This allows the FEM, NV spin-dynamics, sensing, and control components to be used independently or combined with other simulation tools according to the requirements of the physical system being modeled.
+
+
+
+---
+
+## **Overview**
+
+Nitrogen-vacancy (NV) centers in diamond provide a powerful platform for quantum sensing of magnetic, mechanical, thermal, and other physical environments.
+
+The performance of an NV quantum sensor depends not only on the intrinsic spin properties of the defect, but also on the local physical environment, sensor geometry, strain distribution, magnetic field, decoherence processes, and available control protocols.
+
+The **NV Quantum Sensor Simulator** provides a computational framework for studying these coupled effects before experimental implementation.
+
+The project is organized around a modular computational pipeline connecting:
+
+**Physical environment → mechanical fields → NV spin Hamiltonian → Lindblad dynamics → control protocol → quantum response → sensing performance**
+
+The simulator is structured as a modular computational foundation that can accommodate additional NV modeling, sensing, and adaptive-control capabilities.
+
+*For additional extensions and technical details, see [Extension Architecture](extention.text.md).*
+
+---
+
+## **Computational Workflow**
 
 The simulator connects the physical environment of an NV sensor to its quantum response and sensing performance through an integrated computational workflow.
 
- <img width="1672" height="941" alt="image" src="https://github.com/user-attachments/assets/9a7d1e33-1880-4b9c-bb6b-bb0d6f744fb2" />
-
+![NV Quantum Sensor Simulator computational workflow](docs/images/schematic_workflow.png)
 
 **Figure 1. End-to-end computational workflow of the NV Quantum Sensor Simulator, including physics-informed control optimization for case-specific sensor conditions.**
 
-The main computational stages are:
+The computational sequence is:
 
-1. Physical environment
-2. Finite-element mechanical modeling
-3. NV quantum model
-4. Lindblad open-system dynamics
-5. Quantum control and dynamical decoupling
-6. Physics-informed control optimization
-7. NV sensor response and performance evaluation
-
-The workflow is designed so that changes in the physical environment can propagate through the mechanical and quantum models and affect the resulting control and sensing response.
-
----
-
-## Scientific Motivation
-
-Nitrogen-vacancy centers in diamond provide quantum sensors whose response depends on magnetic fields, mechanical strain, temperature, decoherence, and the applied control protocol.
-
-For realistic sensor configurations, these effects cannot always be treated independently.
-
-Mechanical deformation can generate spatially varying strain fields. The local strain experienced by an NV center depends on its position and orientation. Magnetic fields modify the spin Hamiltonian, while environmental interactions influence the evolution and coherence of the quantum state.
-
-Control sequences then determine how the quantum system responds to the physical environment.
-
-This simulator connects these physical layers within a common computational framework, providing a computational pathway from environmental conditions to quantum response and sensor performance.
+1. Define the sensor and environmental configuration.
+2. Construct the mechanical model using finite-element methods.
+3. Compute displacement and strain fields.
+4. Map relevant physical quantities into the NV spin model.
+5. Construct the NV-center spin Hamiltonian.
+6. Propagate the quantum state using Lindblad master-equation dynamics.
+7. Apply and simulate dynamical-decoupling or sensing pulse sequences.
+8. Evaluate the resulting quantum response and sensing performance.
+9. Apply adaptive optimization or physics-informed reinforcement learning to identify suitable control configurations for specific physical conditions.
 
 ---
 
-## Core Computational Framework
+## **Current Capabilities**
 
-The framework integrates four principal computational layers:
+The current repository provides a computational foundation for:
 
-| Layer                | Computational role                                                                  |
-| -------------------- | ----------------------------------------------------------------------------------- |
-| Mechanical modeling  | Geometry, finite-element mesh, elasticity, displacement, and strain                 |
-| Quantum modeling     | NV spin Hamiltonian, magnetic-field interaction, and strain-dependent contributions |
-| Open-system dynamics | Lindblad evolution, decoherence, and quantum coherence                              |
-| Control optimization | Dynamical decoupling and physics-informed control selection                         |
+* NV-center spin-1 Hamiltonian construction.
+* Zero-field splitting and Zeeman interactions.
+* Effective strain-dependent Hamiltonian terms.
+* Lindblad master-equation evolution.
+* Pure-dephasing modeling.
+* Quantum coherence evaluation.
+* Hahn-echo pulse-sequence simulation.
+* Finite-element mechanical modeling using `scikit-fem`.
+* Mechanical displacement and strain-field calculation.
+* Mesh-convergence analysis.
+* Coupling of FEM-derived strain information to the NV model.
+* Automated numerical and physics-consistency tests.
+* Visualization of representative mechanical and quantum-simulation results.
 
-The layers are connected so that physical conditions can influence quantum dynamics and control performance.
-
----
-
-## NV Spin Hamiltonian
-
-The NV electronic ground state is represented as a spin-1 quantum system.
-
-The Hamiltonian model includes:
-
-* Zero-field splitting
-* Magnetic-field interaction
-* Transverse strain contribution
-* Configurable electron gyromagnetic ratio
-* Three-component magnetic-field input
-
-The implementation uses QuTiP spin operators and represents the Hamiltonian in frequency units.
-
-> [!IMPORTANT]
-> The quantum model is connected to physical environmental parameters rather than treating the NV center as an isolated abstract spin system.
-
-A compact representation of the modeled structure is:
-
-> **NV Hamiltonian = zero-field splitting + magnetic interaction + strain interaction**
-
-This provides the basis for evaluating changes in the NV energy structure under different magnetic and mechanical conditions.
+The modular architecture also supports additional computational extensions described in ***,  [Extension Architecture](extention.text.md).***.
 
 ---
 
-## NV Orientation
+## **Finite-Element Mechanical Modeling**
 
-The response of an NV center depends on the orientation of the NV quantization axis relative to the applied magnetic field and local mechanical environment.
+The mechanical component uses finite-element methods to calculate displacement and strain fields in a representative sensor environment.
 
-The simulator therefore treats the magnetic field as a three-component vector rather than as a scalar magnitude.
+The FEM module includes:
 
-This provides the basis for orientation-aware quantum-sensing configurations in which local physical quantities can be related to the coordinate system of an individual NV center.
+* Geometry definition.
+* Mesh generation.
+* Elasticity calculations.
+* Displacement-field evaluation.
+* Strain-field extraction.
+* Mesh-convergence studies.
+* Transfer of mechanical information to the NV spin model.
 
----
+### **Finite-Element Mechanical Field**
 
-## Finite-Element Mechanical Modeling
+![Finite-element mechanical field](docs/images/fem_fields.png)
 
-Mechanical effects are represented using a finite-element model of a diamond cantilever.
+**Figure 2. Finite-element simulation of the mechanical displacement and strain fields used as the basis for NV strain modeling.**
 
-The mechanical model includes:
-
-* Parametric cantilever geometry
-* Structured triangular mesh generation
-* Linear elasticity
-* Material parameters
-* Fixed boundary conditions
-* Applied mechanical traction
-* Displacement-field calculation
-* Strain-field extraction
-
-The implementation uses `scikit-fem` for finite-element assembly and numerical solution.
-
-The resulting displacement and strain fields provide physical inputs for the NV quantum model.
+The mechanical field provides the physical environment from which local strain-dependent effects can be introduced into the quantum model.
 
 ---
 
-## Mechanical-to-Quantum Coupling
+## **NV Spin Hamiltonian**
 
-The simulator connects the finite-element strain field to the NV quantum model through strain-dependent frequency contributions.
+The NV electronic ground state is modeled as a spin-1 quantum system.
 
-The strain-processing layer evaluates the transverse component of the local strain tensor and maps it to an effective frequency contribution.
+The Hamiltonian includes the principal contributions:
 
-The computational relationship is:
+* Zero-field splitting.
+* Zeeman interaction with an external magnetic field.
+* An effective transverse strain contribution.
 
-> **Mechanical deformation → strain field → NV quantum Hamiltonian**
+The model can be expressed as:
 
-This coupling allows mechanical deformation to influence the quantum energy structure rather than treating strain as an unrelated external parameter.
+**H = H_ZFS + H_Z + H_strain**
 
-The architecture also provides a basis for incorporating spatially resolved NV locations and orientation-dependent mechanical effects.
+The implementation uses **QuTiP** for quantum operators and quantum-state evolution.
 
----
+The Hamiltonian module is intentionally separated from the FEM implementation so that different physical environments and field configurations can be evaluated without restructuring the quantum-dynamics layer.
 
-## Open-System Quantum Dynamics
-
-Real quantum sensors interact with their environment and therefore require an open-system description.
-
-The simulator uses Lindblad master-equation dynamics to model the evolution of the NV density matrix.
-
-The current implementation provides:
-
-* Density-matrix evolution
-* Pure dephasing
-* Configurable decoherence rate
-* Quantum coherence evaluation
-* Time-dependent state evolution
-* Trace-preserving numerical evolution
-
-The Hamiltonian is converted from frequency units to angular-frequency units for numerical propagation with QuTiP.
-
-> [!NOTE]
-> The Lindblad layer provides the connection between the ideal NV Hamiltonian and environmentally affected quantum dynamics.
-
-The computational flow is:
-
-> **Initial quantum state → Lindblad evolution → time-dependent density matrix → coherence**
-
-This provides a numerical basis for studying how environmental decoherence modifies the quantum sensor response.
+Additional Hamiltonian extensions and technical implementation details are documented in *** see [Extension Architecture](extention.text.md).***.
 
 ---
 
-## Dynamical Decoupling
+## **Lindblad Quantum Dynamics**
 
-Quantum control is represented through pulse-sequence modeling.
+Open-system dynamics are modeled using the Lindblad master equation.
 
-The current control layer includes a Hahn-echo sequence consisting of:
+The current implementation supports pure dephasing through a collapse operator and evaluates the evolution of the density matrix using QuTiP.
 
-1. Free evolution
-2. Pi pulse
-3. Second free-evolution period
+The general form is:
 
-The sequence can be combined with Lindblad dynamics to evaluate the resulting quantum coherence.
+**dρ/dt = −i[H, ρ] + Σₖ (LₖρLₖ† − ½{Lₖ†Lₖ, ρ})**
 
-Dynamical decoupling provides a control mechanism for investigating how pulse timing and quantum evolution affect the sensor response.
+where:
 
-The same control layer provides a foundation for evaluating alternative pulse protocols under different physical conditions.
+* **ρ** is the density matrix.
+* **H** is the system Hamiltonian.
+* **Lₖ** are Lindblad collapse operators describing environmental interactions.
+* **†** denotes the Hermitian conjugate.
+* **Σₖ** represents the sum over all modeled environmental channels.
 
----
+This provides the open-system quantum-dynamics foundation for studying environmental decoherence, quantum coherence, and control protocols in NV-based sensing.
 
-## Physics-Informed Control Optimization
-
-The simulator is designed so that physical simulation results can provide the state information required for adaptive control and optimization.
-
-Relevant state information may include:
-
-* Magnetic-field strength
-* Magnetic-field orientation
-* Mechanical strain
-* Temperature
-* Decoherence
-* NV orientation
-* Available control operations
-* Experimental constraints
-
-These quantities can be obtained from the physical simulation and, where appropriate, from sensor or experimental data.
-
-An optimization or reinforcement-learning layer can then use the observed physical state to evaluate or select an appropriate control configuration.
-
-The computational structure is:
-
-> **Physical state → quantum response → control evaluation → sensing performance**
-
-This allows control decisions to be evaluated against the actual physical conditions of the sensor rather than against an isolated abstract model.
-
-The approach is particularly relevant to physics-informed machine learning, where physical constraints and simulated quantum responses can be incorporated into the learning or optimization process.
+Additional Lindblad extensions and technical implementation details are documented in **see [Extension Architecture](extention.text.md).*
 
 ---
 
-## Physics-Based Control Objectives
+## **Pulse Sequences and Dynamical Decoupling**
 
-Control optimization can be formulated around measurable physical objectives rather than an abstract optimization target.
+Quantum sensing performance depends strongly on the applied control sequence.
 
-Relevant objectives include:
+The current implementation includes a basic **Hahn-echo** protocol and provides a modular pulse-sequence framework for dynamical-decoupling and sensing simulations.
 
-* Quantum signal performance
-* Coherence preservation
-* Sensing sensitivity
-* Robustness to environmental variation
-* Control cost
-* Physical validity of the selected operation
+The pulse-sequence layer is designed to represent:
 
-A conceptual multi-objective formulation is:
+* Hahn echo.
+* Carr-Purcell-type sequences.
+* CPMG.
+* XY-family sequences.
+* Case-dependent control configurations.
 
-> [!NOTE]
-> **Reward = sensing performance + coherence + robustness − control cost**
+The objective is to evaluate how control choices interact with the physical environment, quantum evolution, and decoherence processes.
 
-The exact objective can be adapted to the sensing task and experimental constraints.
-
-This formulation provides a pathway for integrating physics-based optimization or reinforcement-learning methods with the simulated quantum sensor.
+Additional pulse-sequence and control implementations are documented in *, see [Extension Architecture](extention.text.md)*.
 
 ---
 
-## Sensor Response and Performance
+## **Example Calculations**
 
-The final stage evaluates the response of the NV sensor under the selected physical and control configuration.
+### **NV Coherence Decay**
 
-Relevant observables and performance measures include:
-
-* Quantum coherence
-* Energy-level structure
-* Signal response
-* Control response
-* Robustness
-* Sensing sensitivity
-
-These quantities provide the basis for comparing alternative sensor configurations and control strategies.
-
-The objective is not simply to simulate quantum dynamics, but to use the resulting dynamics to inform practical sensor-design decisions.
-
----
-
-## Sensor Data and Adaptive Learning
-
-The framework can operate with physical states obtained from simulation as well as with suitable sensor or experimental measurements.
-
-A sensor state may contain information describing the current physical environment, such as:
-
-* Magnetic-field conditions
-* Local mechanical strain
-* Temperature
-* Decoherence characteristics
-* NV orientation
-* Experimental control constraints
-
-This information can be passed to an optimization or machine-learning layer to evaluate control configurations for the observed condition.
-
-The resulting architecture provides a pathway from **physical sensing data to quantum modeling and adaptive control**.
-
-This separation between the physical model and the learning layer also allows different optimization approaches to be investigated without changing the underlying NV quantum and mechanical models.
-
----
-
-## Researcher Use
-
-The framework supports computational investigation of questions such as:
-
-* How does mechanical deformation affect an NV sensor?
-* How does local strain modify the NV quantum Hamiltonian?
-* How does magnetic-field orientation influence the energy structure?
-* How does decoherence affect quantum coherence?
-* How do dynamical-decoupling protocols modify the sensor response?
-* Which control configuration is most suitable for a particular physical environment?
-* How robust is a sensing protocol to environmental variation?
-* How can physical simulation inform adaptive quantum-control decisions?
-* How can simulated or measured sensor states be used for physics-informed control optimization?
-
-The resulting simulations can be used to evaluate sensor configurations and control strategies before corresponding experimental implementation.
-
----
-
-## Scientific Software Stack
-
-The project is implemented in Python using established scientific-computing libraries.
-
-| Library    | Role                                        |
-| ---------- | ------------------------------------------- |
-| NumPy      | Numerical arrays and scientific computation |
-| SciPy      | Numerical methods                           |
-| QuTiP      | Quantum dynamics and open quantum systems   |
-| scikit-fem | Finite-element modeling                     |
-| Matplotlib | Scientific visualization                    |
-| pytest     | Automated validation                        |
-
----
-
-## Validation
-
-The repository includes automated tests covering the principal computational components.
-
-Current validation includes:
-
-* NV zero-field energy degeneracy
-* Magnetic-field-induced level splitting
-* Lindblad density-matrix trace preservation
-* Decoherence-induced coherence reduction
-* Finite-element mesh construction
-* Non-zero mechanical displacement
-* Finite strain-field values
-* Strain-coupling behavior
-* Hahn-echo sequence validation
-
-Run the complete test suite with:
-
-```bash
-python -m pytest -q
-```
-
-Current repository validation:
-
-```text
-10 passed
-```
-
----
-
-## Example Calculations
-
-### NV Coherence Decay
+Run the coherence-decay example with:
 
 ```bash
 python -m examples.coherence_decay
 ```
 
-Demonstrates quantum coherence decay under Lindblad dephasing.
+This example demonstrates quantum coherence decay under Lindblad dephasing.
 
-### Finite-Element Visualization
+![NV coherence decay](docs/images/coherence_decay.png)
+
+**Figure 3. Simulated NV coherence decay under Lindblad dephasing.**
+
+---
+
+### **Finite-Element Visualization**
+
+Run:
 
 ```bash
 python -m examples.fem_visualization
 ```
 
-Generates visualization of the mechanical displacement and strain fields.
+This generates a visualization of the mechanical displacement and strain fields obtained from the finite-element model.
 
-### Mesh Convergence
+---
+
+### **Mesh Convergence**
+
+Run:
 
 ```bash
 python -m examples.mesh_convergence
 ```
 
-Evaluates calculated displacement under increasing finite-element mesh resolution.
+The example evaluates the mechanical response for multiple mesh resolutions and provides a numerical convergence check.
 
-### FEM-to-NV Coupling
+---
+
+### **FEM-to-NV Coupling**
+
+Run:
 
 ```bash
 python -m examples.fem_to_nv
 ```
 
-Connects the finite-element strain field to the NV Hamiltonian and evaluates the resulting energy structure.
+This example demonstrates the transfer of FEM-derived strain information into the NV strain-coupling model.
 
-### Hahn-Echo Simulation
+---
+
+### **Hahn Echo**
+
+Run:
 
 ```bash
 python -m examples.hahn_echo
 ```
 
-Simulates a Hahn-echo sequence under NV Hamiltonian dynamics and Lindblad dephasing.
+This example combines the NV Hamiltonian, Lindblad dephasing, and a Hahn-echo control sequence to evaluate the resulting quantum coherence.
 
 ---
 
-## Repository Structure
+## **Researcher Use**
+
+The intended use of the simulator is to allow a researcher to modify a physical sensor configuration and evaluate its consequences computationally before implementing the corresponding experiment.
+
+A typical workflow can include:
+
+1. Define a mechanical or environmental configuration.
+2. Generate the corresponding FEM mesh and physical fields.
+3. Evaluate displacement and strain distributions.
+4. Select an NV position and orientation.
+5. Map local physical quantities into the NV coordinate system.
+6. Construct the corresponding spin Hamiltonian.
+7. Simulate open-system quantum dynamics.
+8. Apply a sensing or dynamical-decoupling sequence.
+9. Evaluate a sensing-related observable.
+10. Compare alternative sensor configurations or control protocols.
+*For additional extensions and technical details, see [Extension Architecture](extention.text.md).*
+
+---
+
+## **Physics-Informed Adaptive Control**
+
+The simulator architecture includes an adaptive-control layer designed to respect the underlying physical structure of the sensing problem.
+
+The control architecture can be represented conceptually as:
+
+**s_NV → πθ(a | s_NV) → control configuration → quantum evolution → sensing response**
+
+where the observed physical state may contain quantities such as:
+
+* Magnetic field.
+* Local strain.
+* Temperature.
+* Decoherence parameters.
+* NV orientation.
+* Spatial configuration.
+* Experimental control constraints.
+
+The control policy can select an admissible control configuration appropriate for the current physical state.
+
+The optimization remains constrained by the physical and experimental structure of the sensing system rather than treating the control problem as an unconstrained numerical optimization.
+
+The control objective can combine:
+
+* Sensing performance.
+* Quantum coherence.
+* Robustness.
+* Control cost.
+* Experimental feasibility.
+
+Additional adaptive-control and physics-informed learning details are documented in  [Extension Architecture](extention.text.md).
+
+---
+
+## **Validation and Testing**
+
+The repository includes automated tests covering the main computational components.
+
+The test suite currently checks:
+
+* NV Hamiltonian construction.
+* Spin-1 operator consistency.
+* Magnetic-field response.
+* Lindblad evolution.
+* Quantum coherence behavior.
+* FEM mesh generation.
+* Elasticity calculations.
+* Strain-field extraction.
+* FEM-to-NV strain coupling.
+* Hahn-echo evolution.
+
+Run the complete test suite with:
+
+```bash
+pytest
+```
+
+The tests provide a reproducible numerical baseline for the coupled mechanical and quantum-simulation components.
+
+---
+
+## **Software Stack**
+
+The project is implemented in Python and currently uses:
+
+* **NumPy** — numerical array operations.
+* **SciPy** — scientific computing utilities.
+* **Matplotlib** — scientific visualization.
+* **QuTiP** — quantum dynamics and open-system simulation.
+* **scikit-fem** — finite-element modeling.
+* **pytest** — automated testing.
+
+---
+
+## **Repository Structure**
 
 ```text
 nv-quantum-sensor-simulator/
+│
 ├── README.md
+├── extention.txt
 ├── pyproject.toml
 ├── .gitignore
 │
@@ -417,7 +374,9 @@ nv-quantum-sensor-simulator/
 │
 ├── docs/
 │   └── images/
-│       └── nv-sensor-workflow.png
+│       ├── schematic_workflow.png
+│       ├── fem_fields.png
+│       └── coherence_decay.png
 │
 └── results/
     └── .gitkeep
@@ -425,90 +384,7 @@ nv-quantum-sensor-simulator/
 
 ---
 
-## Computational Architecture
-
-The software architecture separates the principal physical and computational components.
-
-### Mechanical Layer
-
-Responsible for:
-
-* Geometry
-* Mesh generation
-* Elasticity solution
-* Displacement fields
-* Strain fields
-
-### Quantum Layer
-
-Responsible for:
-
-* Spin-1 operators
-* NV Hamiltonian
-* Magnetic-field interaction
-* Strain-dependent contributions
-* Lindblad evolution
-* Quantum coherence
-
-### Control Layer
-
-Responsible for:
-
-* Pulse sequences
-* Dynamical decoupling
-* Control constraints
-* Physics-informed control optimization
-
-### Evaluation Layer
-
-Responsible for:
-
-* Quantum coherence
-* Signal response
-* Sensing performance
-* Robustness
-* Control quality
-
-The modular structure allows individual physical models to be validated independently while remaining connected through the overall sensing workflow.
-
----
-
-## From Simulation to Sensor Design
-
-The framework is structured around a practical computational question:
-
-> [!IMPORTANT]
-> **What sensor configuration and control strategy should be used for a given physical environment?**
-
-The computational process begins with the environmental and mechanical configuration, constructs the corresponding quantum model, propagates the open-system dynamics, applies the selected control protocol, and evaluates the resulting sensor response.
-
-When sensor or experimental data are available, the same framework can use the observed physical state as an input to control evaluation and adaptive optimization.
-
-This provides a computational pathway from physical modeling and sensing data to quantum-sensor design.
-
----
-
-## Relevance to NV Quantum Sensing
-
-The project addresses several computational aspects relevant to NV-center quantum sensing:
-
-* Spin-Hamiltonian modeling
-* Magnetic-field interactions
-* Mechanical strain effects
-* Open quantum-system dynamics
-* Decoherence
-* Dynamical decoupling
-* Finite-element mechanical simulation
-* Physics-informed control optimization
-* Adaptive control under physical constraints
-* Sensor-data-driven computational modeling
-* Computational evaluation of sensing performance
-
-The integration of these components provides a computational framework for studying NV sensors under coupled mechanical, magnetic, environmental, and control conditions.
-
----
-
-## Related Research and Adaptive Control
+## **Related Research and Adaptive Control**
 
 The broader adaptive-control direction is also conceptually informed by previous research on case-dependent execution under predefined structural constraints.
 
@@ -528,6 +404,23 @@ The source code associated with the DynFair research will be made publicly avail
 
 ---
 
-## License
+## **Project Status**
 
-This project is released under the license specified in the repository.
+This repository provides a modular computational framework for coupled mechanical and quantum modeling of NV-based quantum sensing.
+
+The architecture is designed to accommodate specialized modeling, sensing, and adaptive-control extensions while preserving the established FEM, Hamiltonian, Lindblad, and pulse-sequence components.
+
+The emphasis is on:
+
+* Physically interpretable models.
+* Reproducible numerical simulations.
+* Modular scientific software.
+* Explicit validation through automated tests.
+* Clear separation between core computational components and specialized extensions.
+*For additional extensions and technical details, see [Extension Architecture](extention.text.md).*
+
+---
+
+## **License**
+
+This project is intended as an open scientific software project. Licensing details will be finalized as the repository develops.
