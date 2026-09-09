@@ -33,7 +33,7 @@ The project is organized around a modular computational pipeline connecting:
 
 The simulator is structured as a modular computational foundation that can accommodate additional NV modeling, sensing, and adaptive-control capabilities.
 
-**For additional extensions and technical details, see [extention.txt](extention.txt).**
+*For additional extensions and technical details, see [Extension Architecture](extention.text.md).*
 
 ---
 
@@ -77,7 +77,7 @@ The current repository provides a computational foundation for:
 * Automated numerical and physics-consistency tests.
 * Visualization of representative mechanical and quantum-simulation results.
 
-The modular architecture also supports additional computational extensions described in **[extention.txt](extention.txt)**.
+The modular architecture also supports additional computational extensions described in ***,  [Extension Architecture](extention.text.md).***.
 
 ---
 
@@ -123,7 +123,7 @@ The implementation uses **QuTiP** for quantum operators and quantum-state evolut
 
 The Hamiltonian module is intentionally separated from the FEM implementation so that different physical environments and field configurations can be evaluated without restructuring the quantum-dynamics layer.
 
-Additional Hamiltonian extensions and technical implementation details are documented in **[extention.txt](extention.txt)**.
+Additional Hamiltonian extensions and technical implementation details are documented in *** see [Extension Architecture](extention.text.md).***.
 
 ---
 
@@ -147,7 +147,7 @@ where:
 
 This provides the open-system quantum-dynamics foundation for studying environmental decoherence, quantum coherence, and control protocols in NV-based sensing.
 
-Additional Lindblad extensions and technical implementation details are documented in **[extention.txt](extention.txt)**.
+Additional Lindblad extensions and technical implementation details are documented in **see [Extension Architecture](extention.text.md).*
 
 ---
 
@@ -167,7 +167,7 @@ The pulse-sequence layer is designed to represent:
 
 The objective is to evaluate how control choices interact with the physical environment, quantum evolution, and decoherence processes.
 
-Additional pulse-sequence and control implementations are documented in **[extention.txt](extention.txt)**.
+Additional pulse-sequence and control implementations are documented in *, see [Extension Architecture](extention.text.md)*.
 
 ---
 
@@ -253,8 +253,7 @@ A typical workflow can include:
 8. Apply a sensing or dynamical-decoupling sequence.
 9. Evaluate a sensing-related observable.
 10. Compare alternative sensor configurations or control protocols.
-
-For additional computational extensions and technical details, see **[extention.txt](extention.txt)**.
+*For additional extensions and technical details, see [Extension Architecture](extention.text.md).*
 
 ---
 
@@ -288,7 +287,7 @@ The control objective can combine:
 * Control cost.
 * Experimental feasibility.
 
-Additional adaptive-control and physics-informed learning details are documented in **[extention.txt](extention.txt)**.
+Additional adaptive-control and physics-informed learning details are documented in  [Extension Architecture](extention.text.md).
 
 ---
 
