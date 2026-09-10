@@ -1,213 +1,201 @@
-# NV Quantum Sensor Framework
+# NV Quantum Sensor Simulator — Extension Architecture
 
-The **NV Quantum Sensor Simulator** is organized as an extensible scientific framework for computational NV quantum sensing.
+The **NV Quantum Sensor Simulator** is structured as a modular computational framework for designing, simulating, testing, and evaluating NV quantum-sensor configurations under defined physical conditions.
 
-The framework combines a modular scientific foundation with extension layers for physical modeling, multiphysics interoperability, quantum sensing, adaptive control, and physics-informed learning.
+The architecture separates the **Core Computational Layer** from specialized extension layers. This separation is an engineering design choice: it keeps the central physical and numerical models reusable while providing clear interfaces through which additional sensor, multiphysics, sensing, control, and learning capabilities can be integrated.
 
-The foundation and extension layers form one computational framework. The modular structure allows researchers and developers to introduce specialized scientific components while preserving the independence of the core numerical models.
+The extensions are not separate projects. They are computational layers built around the same NV simulation workflow.
 
-**Foundation + Extensions = One Open Scientific Framework**
+## Why the Framework Is Split into Core and Extensions
 
-## Framework Structure
+The simulator contains several scientific domains that interact but do not need to be implemented as one tightly coupled software component.
 
-```text
-NV QUANTUM SENSOR FRAMEWORK
+For example:
 
-|
-├── FOUNDATION
-|   ├── NV spin Hamiltonian
-|   ├── Lindblad quantum dynamics
-|   ├── Pulse-sequence modeling
-|   ├── FEM mechanical modeling
-|   ├── Strain-field representation
-|   └── Scientific numerical interfaces
-|
-└── EXTENSIONS
-    ├── Extension 1 — Spatial NV Sensor Modeling
-    ├── Extension 2 — Multiphysics Interoperability
-    ├── Extension 3 — Physical Environment Coupling
-    ├── Extension 4 — Quantum Sensing and Measurement
-    ├── Extension 5 — Adaptive Quantum Control
-    └── Extension 6 — Physics-Informed Reinforcement Learning
-```
+* the NV Hamiltonian should not depend on a particular FEM solver;
+* a mechanical-field representation should not depend on a particular quantum-dynamics implementation;
+* a sensing model should consume simulated quantum states without redefining the quantum model;
+* a control policy should operate on physical states and evaluated sensing responses rather than directly modifying the underlying physics implementation.
 
-The **Foundation** provides the common scientific and numerical layer.
-
-The **Extensions** provide specialized computational capabilities that connect to this layer through physical states, simulation data, quantum models, sensing outputs, and control interfaces.
-
-The framework is therefore not divided into separate projects. The different components represent different computational layers of the same scientific system.
-
-## Scientific Computational Architecture
-
-The framework connects the physical environment of an NV sensor to its simulated quantum response.
+The architecture therefore provides a common computational core with explicit extension points.
 
 ```text
-Physical Sensor Configuration
-            |
-            v
-Mechanical / Multiphysics Model
-            |
-            v
-Physical Environment
-            |
-            v
-Local NV Physical State
-            |
-            v
-NV Spin Hamiltonian
-            |
-            v
-Lindblad Quantum Dynamics
-            |
-            v
-Control / Pulse Protocol
-            |
-            v
-Quantum-Sensing Response
-            |
-            v
-Performance Evaluation
+Core Computational Layer
+        |
+        +── Spatial Sensor Modeling
+        |
+        +── Multiphysics Field Interfaces
+        |
+        +── Physical Environment Coupling
+        |
+        +── Quantum Sensing
+        |
+        +── Adaptive Control
+        |
+        +── Physics-Informed Learning
+        |
+        v
+Integrated NV Sensor Workflow
 ```
 
-Each layer can operate independently while remaining compatible with the complete computational workflow.
+This organization allows a researcher or engineering team to introduce a specialized computational component, test it independently, and integrate it into the existing workflow without redesigning the complete simulator.
 
-## Foundation
+The same interface can therefore support different physical models, sensor configurations, field sources, sensing observables, control strategies, and optimization methods.
 
-The foundation contains the core numerical components shared by the framework.
+## Core Computational Layer
 
-Its role is to provide scientific interfaces for:
+The core layer contains the computational models required by the simulator itself.
 
-* NV-center spin Hamiltonians
-* open-system quantum dynamics
+It provides:
+
+* NV spin Hamiltonian construction
+* spin-1 quantum operators
+* magnetic-field interactions
+* effective strain coupling
+* Lindblad open-system evolution
+* decoherence modeling
 * pulse-sequence representation
 * finite-element mechanical modeling
-* strain-field representation
-* numerical analysis
+* displacement and strain-field calculation
+* numerical field representation
 * scientific visualization
 * automated validation
 
-The foundation is intentionally modular so that additional physical models, sensing methods, control algorithms, and learning components can connect to it without coupling the entire framework to one implementation.
+The core layer provides the physical and numerical interfaces used by the extension layers.
+
+The separation is intentional: extensions consume and produce defined computational states rather than duplicating the underlying scientific models.
 
 ## Extension 1 — Spatial NV Sensor Modeling
 
-The spatial-sensor extension represents NV centers as physical sensing locations within a simulated structure.
+The spatial-sensor extension introduces an explicit physical representation of the NV sensing location.
 
-The first implementation is provided by:
+Implementation:
 
 ```text
 nv/sensor.py
 ```
 
-The `NVSensor` model provides:
+The `NVSensor` model represents:
 
-* Cartesian position of an NV center
+* Cartesian sensor position
 * three-dimensional NV orientation
-* automatic normalization of the orientation vector
-* validation of sensor position and orientation
-* distance calculation from the NV center to a Cartesian point
+* normalized orientation
+* validated spatial coordinates
+* distance from the sensor to a Cartesian point
 
-The implementation is validated by:
+The spatial representation provides the reference required for connecting an NV sensor with spatially varying physical fields.
+
+The interface can be summarized as:
+
+```text
+Sensor Configuration
+        |
+        v
+NV Position + Orientation
+        |
+        v
+Local Physical Conditions
+        |
+        v
+Quantum Sensor Model
+```
+
+Validation:
 
 ```text
 tests/test_sensor.py
 ```
 
-The current test suite verifies:
+The tests cover:
 
 * orientation normalization
 * position preservation
 * distance calculation
-* invalid position handling
+* invalid-position handling
 * zero-orientation rejection
 
-The extension is connected to the existing NV package and uses the scientific foundation rather than duplicating the underlying quantum-dynamics implementation.
-
-This provides the first spatial representation layer for extending the simulator from a single abstract NV system toward spatially defined quantum-sensor configurations.
+This extension establishes the spatial layer required for moving from an abstract NV quantum system toward physically positioned sensor configurations.
 
 ## Extension 2 — Multiphysics Interoperability
 
-The multiphysics-interoperability extension provides a common representation for spatially sampled physical-field data.
+The multiphysics extension provides a solver-independent representation of spatially sampled physical-field data.
 
-The current implementation is provided by:
+Implementation:
 
 ```text
 fem/field_data.py
 ```
 
-The `FieldData` model provides a generic interface for representing physical quantities sampled at three-dimensional spatial locations.
+The `FieldData` model provides:
 
-It provides:
+* spatial sample coordinates
+* physical-field values
+* field names
+* field units
+* dimensional validation
+* nearest-position lookup
+* field retrieval at an NV sensor location
 
-* spatial sample positions
-* corresponding physical-field values
-* field names and units
-* validation of spatial and field-data dimensions
-* nearest-position field lookup
-* field-value retrieval at an NV sensor position
-
-The current implementation can therefore connect spatial physical-field data with the spatial NV sensor model.
-
-The interface supports the computational path:
+The interface is:
 
 ```text
-Physical Field Data
+Physical / Multiphysics Solver
         |
         v
-Spatial Field Representation
+Spatial Field Data
+        |
+        v
+FieldData
         |
         v
 NV Sensor Position
         |
         v
-Local Physical Field Value
+Local Physical Field
 ```
 
-The implementation is validated by:
+Validation:
 
 ```text
 tests/test_field_data.py
 ```
 
-The current test suite verifies:
+The tests cover:
 
-* spatial field-data construction
+* field-data construction
 * field metadata
 * nearest-position lookup
-* invalid spatial input handling
-* mismatched field-data handling
+* invalid spatial input
+* mismatched field data
 * empty-data rejection
-* field-value retrieval at an NV sensor position
+* retrieval of field values at an NV sensor position
 
-The interface is intentionally solver-independent. The field data can originate from the built-in Python FEM implementation or from external multiphysics environments through appropriate data-exchange or Python interoperability mechanisms.
+The interface is deliberately independent of a specific FEM solver.
 
-This provides a common data layer between multiphysics simulations and spatially resolved NV quantum-sensor models without coupling the framework to a single FEM solver.
+The built-in Python FEM implementation provides one source of field data. External multiphysics environments can provide equivalent spatial field data through compatible data-exchange and Python interoperability workflows.
 
-The existing Python FEM implementation remains available as one source of physical-field data, while external environments such as COMSOL or ANSYS can be connected through compatible data-exchange workflows.
+This design allows the quantum-sensing model to remain independent of the physical-field solver used to generate the environment.
 
 ## Extension 3 — Physical Environment Coupling
 
-The physical-environment coupling extension connects local environmental conditions with the NV quantum model.
+The physical-environment extension connects local environmental conditions with the NV quantum model.
 
-The current implementation is provided by:
+Implementation:
 
 ```text
 nv/environment.py
 ```
 
-The `NVEnvironment` model represents the local physical state experienced by an NV sensor.
+The `NVEnvironment` model represents local conditions including:
 
-It currently supports:
+* magnetic-field components
+* effective strain
+* temperature
+* validated physical parameters
+* NV Hamiltonian construction
+* combined sensor-environment state representation
 
-* local magnetic-field components
-* effective strain parameters
-* local temperature
-* validation of physical-state inputs
-* construction of an NV Hamiltonian from the local environment
-* construction of a combined numerical state vector for an NV sensor and its environment
-
-The extension connects the spatial sensor representation introduced in Extension 1 with the physical-field representation introduced in Extension 2.
-
-The resulting computational path is:
+The computational connection is:
 
 ```text
 Spatial NV Sensor
@@ -228,43 +216,35 @@ NV Hamiltonian
 Quantum Dynamics
 ```
 
-The implementation is validated by:
+Validation:
 
 ```text
 tests/test_environment.py
 ```
 
-The current test suite verifies:
+The tests cover:
 
 * physical-environment construction
 * magnetic-field validation
 * temperature validation
-* NV Hamiltonian construction
-* combined sensor-environment state representation
+* Hamiltonian construction
+* sensor-environment state representation
 
-The environment layer separates the description of the local physical state from the underlying quantum-dynamics implementation.
+This extension separates the description of the local physical state from the quantum-dynamics implementation.
 
-This separation allows additional environmental quantities and field-coupling models to be introduced without redesigning the existing NV Hamiltonian or Lindblad components.
-
-The current implementation provides the computational interface required to connect local physical conditions with the NV quantum model. More detailed field transformations, temperature-dependent parameters, spatial interpolation, and experimentally calibrated coupling models can be introduced through subsequent extensions.
+That separation makes it possible to evaluate different physical conditions using the same NV quantum model.
 
 ## Extension 4 — Quantum Sensing and Measurement
 
-The quantum-sensing and measurement extension connects simulated NV quantum states with measurable sensing observables.
+The quantum-sensing extension converts simulated quantum states into sensing observables.
 
-The current implementation is provided by:
+Implementation:
 
 ```text
 nv/measurement.py
 ```
 
-The measurement layer provides computational interfaces for evaluating:
-
-* population probabilities in selected NV basis states
-* ground-state coherence
-* normalized sensing signals
-
-The current interfaces are:
+The measurement layer provides:
 
 ```python
 population_probability(state, basis_state)
@@ -272,9 +252,13 @@ coherence_signal(state)
 measurement_signal(state)
 ```
 
-The measurement layer is intentionally separated from the quantum-dynamics layer. The quantum model determines the simulated state, while the measurement layer converts that state into quantities that can be used to evaluate sensor response.
+These interfaces provide computational access to:
 
-The current computational path is:
+* population probabilities
+* ground-state coherence
+* normalized sensing signals
+
+The measurement layer is intentionally separated from quantum-state evolution.
 
 ```text
 NV Quantum State
@@ -286,53 +270,53 @@ Measurement Model
 Sensing Observable
         |
         v
-Sensing Performance
+Performance Evaluation
 ```
 
-The implementation is validated by:
+Validation:
 
 ```text
 tests/test_measurement.py
 ```
 
-The current test suite verifies:
+The tests cover:
 
-* population probability for a selected basis state
-* zero probability for an orthogonal state
-* coherence evaluation for a superposition state
-* normalized measurement-signal construction
-* zero measurement signal for a basis state
+* selected-basis population probability
+* orthogonal-state probability
+* coherence evaluation
+* normalized measurement signal
+* zero signal for a basis state
 
-The current implementation is intentionally lightweight and provides a foundation for more detailed measurement models.
+This provides a defined interface between quantum simulation and sensor-performance evaluation.
 
-Future sensing extensions can introduce experimentally calibrated readout mechanisms, optical contrast, photon-counting models, measurement noise, sensitivity metrics, and protocol-specific sensing observables.
+It also allows sensing models to evolve independently from the underlying quantum-dynamics implementation.
+
 ## Extension 5 — Adaptive Quantum Control
 
-The adaptive-control extension introduces a computational layer for selecting admissible quantum-control configurations according to an objective function.
+The adaptive-control extension provides mechanisms for evaluating and selecting admissible control configurations according to a defined objective.
 
-The current implementation is provided by:
+Implementation:
 
 ```text
 nv/control.py
 ```
 
-The `ControlConfiguration` model represents an admissible control configuration by specifying:
+The `ControlConfiguration` model represents:
 
-* a configuration name
+* a control-configuration name
 * a sequence of non-negative control intervals
-* the total duration of the control sequence
+* total sequence duration
 
-The current control-selection interface is:
+The direct selection interface is:
 
 ```python
-select_control_configuration(configurations, objective_values)
+select_control_configuration(
+    configurations,
+    objective_values,
+)
 ```
 
-This interface selects the control configuration with the highest evaluated objective value.
-
-The control layer is intentionally separated from the quantum-dynamics and measurement layers. The quantum model determines the physical evolution, the measurement layer evaluates the resulting sensing response, and the control layer provides a mechanism for comparing and selecting admissible control configurations.
-
-The current computational path is:
+The computational workflow is:
 
 ```text
 Physical State
@@ -341,10 +325,10 @@ Physical State
 Admissible Control Configurations
         |
         v
-Quantum Dynamics
+Quantum Simulation
         |
         v
-Measurement Signal
+Sensing Response
         |
         v
 Objective Evaluation
@@ -353,103 +337,381 @@ Objective Evaluation
 Control Selection
 ```
 
-The current implementation provides a foundation for adaptive control without introducing a reinforcement-learning algorithm at this stage.
-
-The implementation is validated by:
+Validation:
 
 ```text
 tests/test_control.py
 ```
 
-The current test suite verifies:
+The tests cover:
 
-* valid control-configuration construction
-* total control-sequence duration
-* validation of configuration names
-* validation of control-sequence values
-* selection of the configuration with the highest objective value
-* rejection of empty configuration sets
+* valid control configuration construction
+* sequence-duration calculation
+* configuration validation
+* sequence-value validation
+* objective-based selection
+* empty-configuration rejection
 
-Future extensions can introduce protocol-specific pulse representations, experimentally motivated control constraints, robustness objectives, multi-objective control metrics, and adaptive control policies.
+The control layer separates the definition and selection of control configurations from the underlying quantum-dynamics implementation.
 
-The reinforcement-learning layer is treated separately as Extension 6, where the control-selection mechanism can be extended from direct objective-based selection to physics-informed adaptive policies.
-
+This provides a controlled interface for comparing different sensing protocols and control configurations against simulated physical performance.
 
 ## Extension 6 — Physics-Informed Reinforcement Learning
 
-The learning extension provides a computational interface for reinforcement-learning methods operating on the physical sensor state.
+The physics-informed learning extension connects adaptive policy optimization to the physical state and sensing response generated by the simulator.
 
-The important principle is that learning operates **within the physical and structural constraints defined by the framework**.
-
-The reinforcement-learning layer connects:
-
-**Physical State → Control Configuration → Quantum Response → Performance Evaluation**
-
-The physical state describes the current sensor condition.
-
-The control configuration represents an admissible execution strategy.
-
-The quantum-sensing model evaluates the physical consequence of that strategy.
-
-The resulting sensing performance can then provide feedback to the learning process.
-
-A stochastic policy can be used when several valid control configurations are available for the same physical condition. The policy can therefore learn a case-dependent distribution over admissible execution strategies rather than being restricted to one fixed control configuration.
-
-The reward structure can combine sensing performance, coherence, robustness, control cost, and structural validity.
-
-This makes reinforcement learning an adaptive computational layer around the physical simulator rather than a replacement for the underlying quantum and multiphysics models.
-
-## Extension Interfaces
-
-The extension architecture is organized around connections between scientific components rather than around a single software package.
+Implementation:
 
 ```text
-Physical Models
-      |
-      v
-Physical State
-      |
-      +──────────────> NV Quantum Model
-      |
-      +──────────────> Sensing Model
-      |
-      +──────────────> Control / Learning Model
-                              |
-                              v
-                     Control Configuration
-                              |
-                              v
-                       Quantum Simulation
-                              |
-                              v
-                     Sensing Performance
+nv/control.py
 ```
 
-An extension can introduce a new model or computational method while preserving the existing interfaces between the major scientific layers.
+The current control-learning interface contains:
 
-The current architecture therefore allows physical models, field representations, quantum models, measurement methods, control strategies, and learning methods to evolve independently while remaining connected through well-defined computational interfaces.
+* `StochasticControlPolicy`
+* state-dependent action probabilities
+* categorical control-configuration sampling
+* action log-probability evaluation
+* REINFORCE policy-gradient updates
+* physics-informed reward calculation
 
-## Software and Scientific Ecosystem
+The policy operates on the physical sensor state represented by the framework.
 
-The framework is based on the Python scientific-computing ecosystem.
+```text
+Physical Sensor State
+        |
+        v
+Stochastic Control Policy
+        |
+        v
+Admissible Control Configuration
+        |
+        v
+Configured Quantum Evolution
+        |
+        v
+Sensing Response
+        |
+        v
+Physics-Informed Reward
+        |
+        v
+Policy Update
+```
 
-The current foundation uses:
+The policy network produces a probability distribution over admissible control configurations.
 
-* **NumPy** for numerical computation
-* **SciPy** for scientific algorithms
-* **QuTiP** for quantum dynamics
-* **scikit-fem** for finite-element modeling
-* **Matplotlib** for scientific visualization
+The implemented reward function is:
 
-Additional scientific and machine-learning libraries can be connected through the extension architecture according to the requirements of a particular physical or computational model.
+```python
+physics_informed_reward(
+    sensing_signal,
+    sequence_duration,
+    duration_weight,
+)
+```
 
-External FEM and multiphysics environments can likewise participate through suitable interoperability or data-exchange mechanisms.
+with the structure:
 
-## How to Extend the Simulator
+```text
+Reward =
+Sensing Signal
+-
+Duration Weight × Sequence Duration
+```
 
-The framework is structured so that a new scientific capability can be added as an extension around the existing foundation.
+The policy-gradient interface is:
 
-A typical extension follows this structure:
+```python
+policy_gradient_update(
+    state,
+    configuration_index,
+    reward,
+    optimizer,
+)
+```
+
+This connects machine-learning optimization directly to the physical simulation workflow.
+
+The learning layer therefore operates around the simulator rather than replacing the underlying physical model.
+
+## Integrated Computational Path
+
+The complete extension architecture connects the major computational layers:
+
+```text
+Physical / Multiphysics Configuration
+                |
+                v
+        Spatial NV Sensor
+                |
+                v
+       Local Physical State
+                |
+                v
+        NV Spin Hamiltonian
+                |
+                v
+      Lindblad Quantum Dynamics
+                |
+                v
+       Control Configuration
+                |
+                v
+       Quantum-Sensing Response
+                |
+                v
+      Performance Evaluation
+                |
+                v
+     Adaptive Control / Learning
+```
+
+Each layer has a defined computational responsibility.
+
+This separation supports:
+
+* independent component validation
+* replacement of individual models
+* comparison of alternative configurations
+* integration of external physical-field data
+* evaluation of sensing performance
+* adaptive control optimization
+
+## Example 1 — NV Coherence Decay
+
+Run:
+
+```bash
+python -m examples.coherence_decay
+```
+
+The example evaluates NV coherence decay under the configured Lindblad dephasing model.
+
+## Example 2 — Finite-Element Visualization
+
+Run:
+
+```bash
+python -m examples.fem_visualization
+```
+
+The example evaluates and visualizes the mechanical displacement and strain fields generated by the FEM model.
+
+## Example 3 — Mesh Convergence
+
+Run:
+
+```bash
+python -m examples.mesh_convergence
+```
+
+The example evaluates the FEM response across mesh resolutions and provides a numerical convergence check.
+
+## Example 4 — FEM-to-NV Coupling
+
+Run:
+
+```bash
+python -m examples.fem_to_nv
+```
+
+The example transfers FEM-derived field information to the NV sensor environment and evaluates the corresponding local physical condition.
+
+## Example 5 — Hahn Echo
+
+Run:
+
+```bash
+python -m examples.hahn_echo
+```
+
+The example combines the NV Hamiltonian, Lindblad dynamics, and Hahn-echo sequence representation to evaluate the resulting quantum coherence.
+
+## Example 6 — Physics-Informed Control
+
+Run:
+
+```bash
+python examples/physics_informed_control.py
+```
+
+The example evaluates admissible control configurations through their configured sequence durations, Lindblad quantum evolution, sensing response, and physics-informed reward.
+
+The learning workflow is:
+
+```text
+Control Configuration
+        |
+        v
+Lindblad Evolution
+        |
+        v
+Sensing Signal
+        |
+        v
+Physics-Informed Reward
+        |
+        v
+Policy-Gradient Update
+```
+
+A representative execution is:
+
+```text
+Physics-informed NV control optimization
+
+short_sequence: duration=5.000e-07 s, sensing_signal=0.759607, reward=0.709607
+medium_sequence: duration=1.000e-06 s, sensing_signal=0.576997, reward=0.476997
+long_sequence: duration=1.500e-06 s, sensing_signal=0.438287, reward=0.288287
+
+Selected configuration: long_sequence
+Sensing signal: 0.438287
+Physics-informed reward: 0.288287
+Policy-gradient loss: 0.000033
+```
+
+The example demonstrates the integration of quantum simulation, sensing evaluation, control configuration, and physics-informed policy optimization.
+
+## Validation and Verification
+
+The framework includes automated tests across the major computational layers.
+
+The validation coverage includes:
+
+```text
+NV Hamiltonian
+Lindblad Dynamics
+Pulse Sequences
+FEM Modeling
+Strain Coupling
+Field Data
+Spatial NV Sensors
+Physical Environment
+Quantum Measurement
+Adaptive Control
+Physics-Informed Learning
+```
+
+Run the complete validation suite with:
+
+```bash
+pytest
+```
+
+The current suite passes:
+
+```text
+44 passed
+```
+
+The validation strategy checks numerical behavior, physical-model interfaces, input constraints, state representations, control behavior, and learning-policy operations.
+
+This provides a reproducible engineering check when modifying or integrating computational components.
+
+## Extension Design Principles
+
+The extension architecture follows several principles.
+
+### Solver Independence
+
+The NV quantum model does not depend on a particular FEM or multiphysics solver.
+
+### Physical State as an Interface
+
+Physical quantities provide the connection between sensor configuration, environmental modeling, quantum dynamics, sensing, and control.
+
+### Explicit Computational Boundaries
+
+Each major scientific capability has a defined module and validation layer.
+
+### Replaceable Components
+
+A physical model, sensing model, control strategy, or learning policy can be evaluated independently without restructuring the entire simulator.
+
+### Reproducible Testing
+
+Each extension is accompanied by automated validation and a corresponding computational example where applicable.
+
+### Integration Rather Than Duplication
+
+Extensions connect to existing scientific models instead of reproducing the same numerical functionality in separate components.
+
+## Engineering and Product Integration
+
+The architecture is designed for computational testing of sensor configurations before corresponding hardware implementation.
+
+A typical engineering workflow is:
+
+```text
+Sensor Configuration
+        |
+        v
+Physical Environment
+        |
+        v
+Multiphysics Simulation
+        |
+        v
+NV Quantum Simulation
+        |
+        v
+Sensing Evaluation
+        |
+        v
+Control Optimization
+        |
+        v
+Configuration Comparison
+```
+
+This supports systematic evaluation of how sensor position, orientation, magnetic field, strain, temperature, decoherence, sensing protocol, and control configuration affect the simulated sensor response.
+
+The modular structure also allows a development team to integrate additional physical models or computational methods through defined interfaces rather than coupling the entire system to one solver or algorithm.
+
+## Multiphysics and External Solver Interoperability
+
+The field-data interface is designed to remain independent of the FEM solver that generates the physical-field data.
+
+The built-in Python FEM implementation provides a native computational path for mechanical displacement and strain modeling.
+
+The same interoperability layer can accommodate compatible field data from established multiphysics environments such as:
+
+* COMSOL Multiphysics
+* ANSYS
+* other compatible finite-element or multiphysics solvers
+
+through appropriate data-exchange formats and Python interoperability mechanisms.
+
+The resulting computational path is:
+
+```text
+External FEM / Multiphysics Solver
+                |
+                v
+        Field Data Exchange
+                |
+                v
+         FieldData Interface
+                |
+                v
+          NV Sensor Position
+                |
+                v
+       Local Physical Environment
+                |
+                v
+        NV Quantum Simulation
+                |
+                v
+        Sensing / Control
+```
+
+This solver-independent architecture allows the NV simulation layer to operate with physical-field data generated by different computational environments while preserving a common interface for sensor evaluation.
+
+## Framework Extension Workflow
+
+A new scientific capability can be integrated through the same architecture:
 
 ```text
 Scientific Requirement
@@ -458,7 +720,7 @@ Scientific Requirement
 Extension Model
         |
         v
-Framework Interface
+Existing Framework Interface
         |
         +── Numerical Implementation
         |
@@ -467,31 +729,9 @@ Framework Interface
         +── Reproducible Example
         |
         v
-Integrated Scientific Workflow
+Integrated NV Sensor Workflow
 ```
 
-This structure keeps specialized implementations separated from the core scientific components while allowing them to participate in the complete NV quantum-sensing workflow.
+The objective is to make each additional capability independently testable while maintaining compatibility with the complete sensor-simulation pipeline.
 
-Extensions may introduce new physical models, solver interfaces, sensing methods, control strategies, or learning algorithms without requiring the foundation to be redesigned.
-
-## Related Research and Adaptive Control
-
-The broader adaptive-control direction is also conceptually informed by previous research on case-dependent execution under predefined structural constraints.
-
-**DynFair: An Ontology-Grounded Reinforcement Learning Framework for Intrinsically Fair Protocol-Compliant Multi-Faceted Decision Execution — Case-Specific Stochastic Policies for Protocol-Compliant Execution**
-
-DynFair studies how a predefined decision can be executed correctly under different observed structural conditions.
-
-In the NV sensing context, the same methodological idea can be viewed as case-dependent execution: the physical state describes the current sensor condition, while an adaptive control method determines an appropriate execution strategy within the physical and experimental constraints.
-
-The connection is therefore methodological. The physical model defines the valid operating structure, while an adaptive learning or optimization layer can determine an appropriate control strategy for the current physical case.
-
-This provides a conceptual bridge between quantum-sensor simulation, sensor data, physics-informed machine learning, and adaptive quantum control.
-
-## How to Run and Use the Extended Simulator
-
-The extended framework can be used at different levels depending on the scientific workflow.
-
-A researcher can use individual foundation components for focused numerical studies, combine several extensions into an integrated NV simulation, or connect the framework with external multiphysics and computational environments through Python interoperability or data exchange.
-
-The same architecture therefore supports both focused component-level studies and complete computational workflows for NV quantum-sensing research.
+The resulting architecture provides a practical computational basis for building, testing, integrating, and evaluating NV quantum-sensing capabilities across different physical and engineering configurations.
